@@ -85,16 +85,17 @@ void MainWindow::on_listWidget_doubleClicked(const QModelIndex &index)
 
 void MainWindow::on_play_clicked()
 {
-    if(ui->listWidget->count() != 0)
-    if(player->state() == QMediaPlayer::PlayingState)
-    {
-        player->pause();
+    if(ui->listWidget->count() != 0) {
+        if(player->state() == QMediaPlayer::PlayingState)
+        {
+            player->pause();
+        }
+       else
+       {
+            player->play();
+            updater->start();
+       }
     }
-   else
-   {
-        player->play();
-        updater->start();
-   }
 }
 
 void MainWindow::on_forward_clicked()
@@ -135,7 +136,14 @@ void MainWindow::on_seekBar_sliderMoved(int position)
 void MainWindow::on_mute_clicked()
 {
     muted = !muted;
-    (muted)?player->setVolume(0):player->setVolume(ui->volumeBar->value());
+    if (muted) {
+        player->setVolume(0);
+        ui->mute->setText("unmute");
+    } else {
+        player->setVolume(ui->volumeBar->value());
+        ui->mute->setText("mute");
+    }
+    /*(muted)?player->setVolume(0):player->setVolume(ui->volumeBar->value());*/
 }
 
 
