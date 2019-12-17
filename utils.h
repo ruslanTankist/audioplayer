@@ -2,6 +2,7 @@
 #define UTILS_H
 
 #include "string"
+#include <cstdlib>
 
 using namespace std;
 
@@ -27,26 +28,38 @@ string getNameFromLocation(string str)
     return ret;
 }
 
-string getNoteFromLocation(string str)
+string getTextFromString(string str)
 {
-    string ret;
-    int index;
-
+    string ret = "";
     for(int i = str.size() - 1; i >= 0; i--)
     {
-        if(str[i] == '/')
+        if(str[i] != '@')
         {
-            index = i + 1;
-            i = -1;
+            ret += str[i];
+        } else {
+            break;
         }
-    }
-
-    for(; index < str.size(); index++)
-    {
-        ret.push_back(str[index]);
     }
 
     return ret;
 }
 
-#endif // UTILS_H
+int getTimeFromString(string str)
+{
+    string retstr = "";
+    int ret;
+    bool text_over = false;
+    for(int i = str.size() - 1; i >= 0; i--)
+    {
+        if(str[i] == '@')
+            text_over = true;
+        if(text_over)
+        {
+            retstr += str[i];
+        }
+    }
+    ret = atoi(retstr.c_str());
+    return ret;
+}
+
+#endif

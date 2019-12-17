@@ -2,9 +2,7 @@
 #define NOTE_H
 
 #include <string>
-#include <map>
 #include <vector>
-#include <string>
 #include "QStringList"
 
 using namespace std;

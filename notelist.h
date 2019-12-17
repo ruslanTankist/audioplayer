@@ -1,9 +1,12 @@
 #ifndef NOTELIST_H
 #define NOTELIST_H
 
-#include "QStringList"
-#include "vector"
+#include <QStringList>
+#include <vector>
 #include "note.h"
+#include <fstream>
+#include <string>
+#include "utils.h"
 
 class NoteList
 {

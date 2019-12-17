@@ -5,6 +5,19 @@
 #include "algorithm"
 #include "iostream"
 #include "string"
+#include <sstream>
+
+string timetostr(int inttime)
+{
+    string str;
+    int hours = inttime / 3600;
+    int minutes = (inttime % 3600) / 60;
+    int seconds = (inttime % 3600) % 60;
+    stringstream ss;
+    ss << hours << ":" << minutes << ":" << seconds;
+    ss >> str;
+    return str;
+}
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -27,14 +40,12 @@ MainWindow::MainWindow(QWidget *parent) :
         player->pause();
         updater->start();
     } 
-
+/*
     ui->listWidgetNotes->setCurrentRow(0);
     if(ui->listWidgetNotes->count() != 0){
-        getNoteList();
+        ();
         updater->start();
-    }
-
-    ui->labelTime->setText(player->position())
+    }*/
 }
 
 
@@ -175,6 +186,8 @@ void MainWindow::update()
     {
         next();
     }
+
+    ui->labelTime->setText(QString::fromStdString(timetostr(player->position() / 1000)));
 }
 
 void MainWindow::updateList()
@@ -303,27 +316,16 @@ void MainWindow::on_searchBar_textChanged(const QString &arg1)
 void MainWindow::updateNoteList()
 {
     ui->listWidgetNotes->clear();
-    ui->listWidgetNotes->addItems(playlist.getNoteList());
+    ui->listWidgetNotes->addItems(notelist.getNoteList());
 }
 
 void MainWindow::on_add_note_clicked()
-{   /*
-    bool startUpdater = false;if(ui->listWidget->count() == 0) startUpdater = true;
-        QStringList files = QFileDialog::getOpenFileNames(this, tr("Select Music Files"));
-        if(!files.empty())
-        {
-            playlist.add(files);
-            updateList();
-            ui->save->setChecked(false);
-            if(shuffle) shufflePlaylist();
-            if(startUpdater) updater->start();
-        }
-    */
+{
     bool startUpdater = false;if(ui->listWidgetNotes->count() == 0) startUpdater = true;
         QStringList files = QFileDialog::getOpenFileNames(this, tr("Select Music Files"));
         if(!files.empty())
         {
-            playlist.add(files);
+            notelist.add(files);
             updateNoteList();
             ui->save_note->setChecked(false);
             if(startUpdater) updater->start();
@@ -351,9 +353,7 @@ void MainWindow::on_save_note_clicked()
 
 void MainWindow::loadNotes()
 {
-     QString qstr = QString::fromStdString(playlist.tracks[getIndex()].getNotes());
-    /* player->setMedia(QUrl::fromLocalFile(qstr));*/
-     qstr = QString::fromStdString(playlist.tracks[getIndex()].getName());
+     QString qstr = QString::fromStdString(playlist.tracks[getIndex()].getName());
      ui->currentSong_2->setText(qstr);
 }
     //вывод заметок

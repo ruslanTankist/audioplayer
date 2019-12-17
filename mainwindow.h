@@ -13,6 +13,8 @@
 
 using namespace std;
 
+string timetostr(int inttime);
+
 namespace Ui {
 class MainWindow;
 }

@@ -20,7 +20,7 @@ std::string Note::getLocation()
     return location;
 }
 
-void Note::setText(std::string name)
+void Note::setText(std::string text)
 {
     this->text = text;
 }
@@ -30,7 +30,7 @@ void Note::setTime(int time)
     this->time = time;
 }
 
-void Track::setLocation(std::string location)
+void Note::setLocation(std::string location)
 {
     this->location = location;
 }
