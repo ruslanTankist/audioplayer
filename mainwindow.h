@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include "playlist.h"
+#include "notelist.h"
 #include <QtMultimedia/QMediaPlayer>
 #include "QTimer"
 #include "QPalette"
@@ -37,6 +38,8 @@ private slots:
 
     void on_seekBar_sliderMoved(int position);
 
+    void on_listWidgetNotes_clicked(const QModelIndex &index);
+
     void on_listWidget_doubleClicked(const QModelIndex &index);
 
     void on_forward_clicked();
@@ -53,6 +56,12 @@ private slots:
 
     void on_searchBar_textChanged(const QString &arg1);
 
+    void on_add_note_clicked();
+
+    void on_remove_note_clicked();
+
+    void on_save_note_clicked();
+
 private:
     void updateList();
 
@@ -66,6 +75,10 @@ private:
 
     int getIndex();
 
+    void updateNoteList();
+
+    void loadNotes();
+
     bool repeat = false;
 
     bool muted = false;
@@ -75,6 +88,8 @@ private:
     int lCounter = 0;
 
     Playlist playlist;
+
+    NoteList notelist;
 
     Ui::MainWindow *ui;
 

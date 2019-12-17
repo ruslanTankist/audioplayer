@@ -2,6 +2,9 @@
 #define TRACK_H
 
 #include <string>
+#include <map>
+#include <vector>
+#include "QStringList"
 
 using namespace std;
 
@@ -17,8 +20,8 @@ public:
     void setName(string name);
 
     void setLocation(string location);
-
 private:
+
     string name = "";
 
     string location = "";

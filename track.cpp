@@ -1,4 +1,5 @@
 #include "track.h"
+#include <fstream>
 
 Track::Track()
 {
@@ -9,6 +10,7 @@ string Track::getName()
 {
     return name;
 }
+
 string Track::getLocation()
 {
     return location;
