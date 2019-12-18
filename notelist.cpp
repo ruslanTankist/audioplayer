@@ -1,6 +1,5 @@
 #include "notelist.h"
 
-
 NoteList::NoteList()
 {
     std::ifstream read("notelist");

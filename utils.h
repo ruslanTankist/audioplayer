@@ -6,7 +6,7 @@
 
 using namespace std;
 
-string getNameFromLocation(string str)
+static string getNameFromLocation(string str)
 {
     string ret;
     int index;
@@ -28,7 +28,7 @@ string getNameFromLocation(string str)
     return ret;
 }
 
-string getTextFromString(string str)
+static string getTextFromString(string str)
 {
     string ret = "";
     for(int i = str.size() - 1; i >= 0; i--)
@@ -44,7 +44,7 @@ string getTextFromString(string str)
     return ret;
 }
 
-int getTimeFromString(string str)
+static int getTimeFromString(string str)
 {
     string retstr = "";
     int ret;

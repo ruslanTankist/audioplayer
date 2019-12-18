@@ -6,7 +6,10 @@
 #include "iostream"
 #include "string"
 #include <sstream>
+#include <iostream>
+#include <fstream>
 
+//seconds to HH:MM:SS
 string timetostr(int inttime)
 {
     string str;
@@ -40,12 +43,12 @@ MainWindow::MainWindow(QWidget *parent) :
         player->pause();
         updater->start();
     } 
-/*
+
     ui->listWidgetNotes->setCurrentRow(0);
     if(ui->listWidgetNotes->count() != 0){
-        ();
+        loadNotes();
         updater->start();
-    }*/
+    }
 }
 
 
@@ -55,6 +58,7 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+//add mp3 location to file "playlist"
 void MainWindow::on_add_clicked()
 {
     bool startUpdater = false;if(ui->listWidget->count() == 0) startUpdater = true;
@@ -88,7 +92,7 @@ void MainWindow::on_save_clicked()
     ui->save->setChecked(true);
 }
 
-
+//load & play track
 void MainWindow::on_listWidget_doubleClicked(const QModelIndex &index)
 {
     lCounter = getIndex();
@@ -163,7 +167,6 @@ void MainWindow::on_mute_clicked()
     }
     /*(muted)?player->setVolume(0):player->setVolume(ui->volumeBar->value());*/
 }
-
 
 void MainWindow::on_repeat_clicked()
 {
@@ -322,10 +325,18 @@ void MainWindow::updateNoteList()
 void MainWindow::on_add_note_clicked()
 {
     bool startUpdater = false;if(ui->listWidgetNotes->count() == 0) startUpdater = true;
-        QStringList files = QFileDialog::getOpenFileNames(this, tr("Select Music Files"));
+       /* QStringList files = QFileDialog::getOpenFileNames(this, tr("Select Music Files"));
         if(!files.empty())
         {
             notelist.add(files);
+            updateNoteList();
+            ui->save_note->setChecked(false);
+            if(startUpdater) updater->start();
+        }*/
+        QStringList newnote;
+        newnote << ui->lineEditNote->text();
+        if(!newnote.empty()){
+            notelist.add(newnote);
             updateNoteList();
             ui->save_note->setChecked(false);
             if(startUpdater) updater->start();

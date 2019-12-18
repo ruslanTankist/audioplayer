@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include "QStringList"
+#include "notelist.h"
 
 using namespace std;
 
@@ -20,6 +21,7 @@ public:
 
     void setLocation(string location);
 private:
+    class Notelist;
 
     string name = "";
 
