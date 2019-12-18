@@ -45,6 +45,7 @@ MainWindow::MainWindow(QWidget *parent) :
     } 
 
     ui->listWidgetNotes->setCurrentRow(0);
+
     if(ui->listWidgetNotes->count() != 0){
         loadNotes();
         updater->start();
@@ -102,6 +103,8 @@ void MainWindow::on_listWidget_doubleClicked(const QModelIndex &index)
 
     loadTrack();
     player->play();
+
+    loadNotes();
 }
 
 
@@ -202,6 +205,11 @@ void MainWindow::updateList()
 int MainWindow::getIndex()
 {
     return ui->listWidget->currentIndex().row();
+}
+
+int MainWindow::getIndexNote()
+{
+    return ui->listWidgetNotes->currentIndex().row();
 }
 
 void MainWindow::keyPressEvent(QKeyEvent *event)
@@ -325,16 +333,11 @@ void MainWindow::updateNoteList()
 void MainWindow::on_add_note_clicked()
 {
     bool startUpdater = false;if(ui->listWidgetNotes->count() == 0) startUpdater = true;
-       /* QStringList files = QFileDialog::getOpenFileNames(this, tr("Select Music Files"));
-        if(!files.empty())
-        {
-            notelist.add(files);
-            updateNoteList();
-            ui->save_note->setChecked(false);
-            if(startUpdater) updater->start();
-        }*/
         QStringList newnote;
-        newnote << ui->lineEditNote->text();
+        QString note_input = ui->textEditNote->toPlainText();
+        newnote << note_input << "@" << QString::number(player->position()/1000);
+
+        if(startUpdater) updater->start();
         if(!newnote.empty()){
             notelist.add(newnote);
             updateNoteList();
@@ -344,31 +347,25 @@ void MainWindow::on_add_note_clicked()
 }
 
 void MainWindow::on_remove_note_clicked()
-{/*
-    int index = getIndex();
+{
+    int index = getIndexNote();
     if(index != -1)
     {
-       playlist.remove(index);
+       notelist.remove(index);
        updateList();
-       ui->listWidget->setCurrentRow(index);
-       ui->save->setChecked(false);
-       if(shuffle) shufflePlaylist();
+       ui->listWidgetNotes->setCurrentRow(index);
+       ui->save_note->setChecked(false);
     }
-  */
 }
 
 void MainWindow::on_save_note_clicked()
 {
-
+    notelist.save();
+    ui->save_note->setChecked(true);
 }
 
 void MainWindow::loadNotes()
 {
      QString qstr = QString::fromStdString(playlist.tracks[getIndex()].getName());
      ui->currentSong_2->setText(qstr);
-}
-    //вывод заметок
-void MainWindow::on_listWidgetNotes_clicked(const QModelIndex &index)
-{
-    loadNotes();
 }

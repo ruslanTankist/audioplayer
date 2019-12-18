@@ -15,14 +15,17 @@ public:
     std::string getText();
 
     int getTime();
+/*
+    std::string getLocation();*/
 
-    std::string getLocation();
+    string getFullRec();
 
     void setText(std::string text);
 
     void setTime(int time);
 
-    void setLocation(std::string location);
+/*    void setLocation(std::string location);*/
+    void setFullRec(string fRec);
 
 private:
     std::string text = "";
@@ -30,6 +33,8 @@ private:
     int time = 0;
 
     std::string location = "";
+
+    std::string fullRec = "";
 };
 
 #endif // NOTE_H

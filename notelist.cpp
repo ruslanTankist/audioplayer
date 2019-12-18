@@ -3,11 +3,10 @@
 NoteList::NoteList()
 {
     std::ifstream read("notelist");
-    string loc;
-    while(getline(read, loc)){
+    string rec;
+    while(getline(read, rec)){
         Note note;
-        note.setLocation(loc);
-        string buf = getNameFromLocation(loc);
+        string buf = note.getFullRec();
         note.setText(getTextFromString(buf));
         note.setTime(getTimeFromString(buf));
         notes.push_back(note);
@@ -19,8 +18,9 @@ void NoteList::add(QStringList files)
     for(int i = 0; i < files.size(); i++)
     {
         Note note;
-        note.setLocation(files[i].toStdString());
-        note.setText(getNameFromLocation(files[i].toStdString()));
+        note.setFullRec(files[i].toStdString());
+        note.setText(getTextFromString(files[i].toStdString()));
+        note.setTime(getTimeFromString(files[i].toStdString()));
         notes.push_back(note);
     }
 }
@@ -34,7 +34,7 @@ void NoteList::save()
 {
     std::ofstream write("notelist");
     for(int i = 0; i < notes.size(); i++){
-        write << notes[i].getLocation() << std::endl;
+        write << notes[i].getFullRec() << std::endl;
     }
 }
 

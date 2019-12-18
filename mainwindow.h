@@ -40,8 +40,6 @@ private slots:
 
     void on_seekBar_sliderMoved(int position);
 
-    void on_listWidgetNotes_clicked(const QModelIndex &index);
-
     void on_listWidget_doubleClicked(const QModelIndex &index);
 
     void on_forward_clicked();
@@ -76,6 +74,8 @@ private:
     void shufflePlaylist();
 
     int getIndex();
+
+    int getIndexNote();
 
     void updateNoteList();
 
