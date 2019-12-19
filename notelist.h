@@ -13,15 +13,17 @@ class NoteList
 public:
     NoteList();
 
-    void add(QStringList files);
+    void add(string curTrackName, QStringList files);
 
-    void remove(int index);
+    void remove(string curTrackName, int index);
 
-    void save();
+    void save(string curTrackName);
 
-    QStringList getNoteList();
+    QStringList getNoteList(string curTrackName);
 
     std::vector<Note> notes;
+
+    string trackName = "";
 };
 
 #endif // NOTELIST_H

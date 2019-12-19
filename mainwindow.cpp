@@ -26,7 +26,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
     if(ui->listWidget->count() != 0){
         loadTrack();
-        loadNotes();
         player->pause();
         updater->start();
     } 
@@ -87,8 +86,6 @@ void MainWindow::on_listWidget_doubleClicked(const QModelIndex &index)
 
     loadTrack();
     player->play();
-
-    loadNotes();
 }
 
 
@@ -287,8 +284,13 @@ void MainWindow::loadTrack()
 {
      QString qstr = QString::fromStdString(playlist.tracks[getIndex()].getLocation());
      player->setMedia(QUrl::fromLocalFile(qstr));
-     qstr = QString::fromStdString(playlist.tracks[getIndex()].getName());
+
+     string currSong = playlist.tracks[getIndex()].getName();
+     qstr = QString::fromStdString(currSong);
+
      ui->currentSong->setText(qstr);
+      ui->currentSong_2->setText(qstr);
+     updateNoteList();
 }
 
 void MainWindow::on_searchBar_textChanged(const QString &arg1)
@@ -310,7 +312,7 @@ void MainWindow::on_searchBar_textChanged(const QString &arg1)
 void MainWindow::updateNoteList()
 {
     ui->listWidgetNotes->clear();
-    ui->listWidgetNotes->addItems(notelist.getNoteList());
+    ui->listWidgetNotes->addItems(notelist.getNoteList(eraseFormat(playlist.tracks[getIndex()].getName())));
 }
 
 void MainWindow::on_add_note_clicked()
@@ -322,7 +324,7 @@ void MainWindow::on_add_note_clicked()
 
         if(startUpdater) updater->start();
         if(!newnote.empty()){
-            notelist.add(newnote);
+            notelist.add(eraseFormat(playlist.tracks[getIndex()].getName()), newnote);
             updateNoteList();
             ui->save_note->setChecked(false);
             if(startUpdater) updater->start();
@@ -335,7 +337,7 @@ void MainWindow::on_remove_note_clicked()
     int index = getIndexNote();
     if(index != -1)
     {
-       notelist.remove(index);
+       notelist.remove(eraseFormat(playlist.tracks[getIndex()].getName()), index);
        updateNoteList();
        ui->listWidgetNotes->setCurrentRow(index);
        ui->save_note->setChecked(false);
@@ -344,12 +346,6 @@ void MainWindow::on_remove_note_clicked()
 
 void MainWindow::on_save_note_clicked()
 {
-    notelist.save();
+    notelist.save(eraseFormat(playlist.tracks[getIndex()].getName()));
     ui->save_note->setChecked(true);
-}
-
-void MainWindow::loadNotes()
-{
-    QString qstr = QString::fromStdString(playlist.tracks[getIndex()].getName());
-     ui->currentSong_2->setText(qstr);
 }

@@ -27,6 +27,12 @@ public:
 /*    void setLocation(std::string location);*/
     void setFullRec(string fRec);
 
+    void setTrackName(string trackName);
+
+    string getTrackName();
+
+    string trackName = "";
+
 private:
     std::string text = "";
 

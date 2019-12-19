@@ -87,4 +87,9 @@ static int getTimeFromString(string str)
     return ret;
 }
 
+static string eraseFormat(string filename)
+{
+    return filename.erase(filename.size() - 4 );
+}
+
 #endif

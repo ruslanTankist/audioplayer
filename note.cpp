@@ -41,5 +41,15 @@ void Note::setFullRec(string fRec)
         ss << text << "@" << time;
         ss >> fullRec;
     }
+}
 
+void Note::setTrackName(string trackName)
+{
+    trackName.erase(trackName.size() - 4);
+    this->trackName = trackName;
+}
+
+string Note::getTrackName()
+{
+    return trackName;
 }

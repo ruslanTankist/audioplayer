@@ -80,8 +80,6 @@ private:
 
     void updateNoteList();
 
-    void loadNotes();
-
     bool repeat = false;
 
     bool muted = false;
