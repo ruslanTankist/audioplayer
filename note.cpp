@@ -15,11 +15,6 @@ int Note::getTime()
 {
    return time;
 }
-/*
-std::string Note::getLocation()
-{
-    return location;
-}*/
 
 std::string Note::getFullRec()
 {
@@ -35,11 +30,7 @@ void Note::setTime(int time)
 {
     this->time = time;
 }
-/*
-void Note::setLocation(std::string location)
-{
-    this->location = location;
-}*/
+
 void Note::setFullRec(string fRec)
 {
     if (!fRec.empty())

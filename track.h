@@ -21,7 +21,7 @@ public:
 
     void setLocation(string location);
 private:
-    class Notelist;
+ //   class Notelist;
 
     string name = "";
 

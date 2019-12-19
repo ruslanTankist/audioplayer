@@ -10,6 +10,7 @@
 #include "vector"
 #include "QKeyEvent"
 #include "QLineEdit"
+#include "utils.h"
 
 using namespace std;
 

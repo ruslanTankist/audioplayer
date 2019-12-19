@@ -5,22 +5,8 @@
 #include "algorithm"
 #include "iostream"
 #include "string"
-#include <sstream>
 #include <iostream>
 #include <fstream>
-
-//seconds to HH:MM:SS
-string timetostr(int inttime)
-{
-    string str;
-    int hours = inttime / 3600;
-    int minutes = (inttime % 3600) / 60;
-    int seconds = (inttime % 3600) % 60;
-    stringstream ss;
-    ss << hours << ":" << minutes << ":" << seconds;
-    ss >> str;
-    return str;
-}
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -40,16 +26,14 @@ MainWindow::MainWindow(QWidget *parent) :
 
     if(ui->listWidget->count() != 0){
         loadTrack();
+        loadNotes();
         player->pause();
         updater->start();
     } 
 
     ui->listWidgetNotes->setCurrentRow(0);
 
-    if(ui->listWidgetNotes->count() != 0){
-        loadNotes();
-        updater->start();
-    }
+    updateNoteList();
 }
 
 
@@ -168,7 +152,6 @@ void MainWindow::on_mute_clicked()
         player->setVolume(ui->volumeBar->value());
         ui->mute->setText("mute");
     }
-    /*(muted)?player->setVolume(0):player->setVolume(ui->volumeBar->value());*/
 }
 
 void MainWindow::on_repeat_clicked()
@@ -334,8 +317,8 @@ void MainWindow::on_add_note_clicked()
 {
     bool startUpdater = false;if(ui->listWidgetNotes->count() == 0) startUpdater = true;
         QStringList newnote;
-        QString note_input = ui->textEditNote->toPlainText();
-        newnote << note_input << "@" << QString::number(player->position()/1000);
+        QString note_input = ui->textEditNote->toPlainText() + "@" + QString::number(player->position()/1000);
+        newnote << note_input;
 
         if(startUpdater) updater->start();
         if(!newnote.empty()){
@@ -348,11 +331,12 @@ void MainWindow::on_add_note_clicked()
 
 void MainWindow::on_remove_note_clicked()
 {
+    qDebug() << "remove clicked";
     int index = getIndexNote();
     if(index != -1)
     {
        notelist.remove(index);
-       updateList();
+       updateNoteList();
        ui->listWidgetNotes->setCurrentRow(index);
        ui->save_note->setChecked(false);
     }
@@ -366,6 +350,6 @@ void MainWindow::on_save_note_clicked()
 
 void MainWindow::loadNotes()
 {
-     QString qstr = QString::fromStdString(playlist.tracks[getIndex()].getName());
+    QString qstr = QString::fromStdString(playlist.tracks[getIndex()].getName());
      ui->currentSong_2->setText(qstr);
 }
