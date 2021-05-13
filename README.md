@@ -9,4 +9,4 @@ Added a feature of saving text-notes for certain time-codes, might be useful for
 
 ## Screenshots
 
-![sh](http://i.imgur.com/98nD251.png)
+![sh](https://i.imgur.com/JgMqykF.png)
