@@ -1,6 +1,6 @@
 #-------------------------------------------------
 #
-# Project created by QtCreator 2016-01-31T00:45:25
+# Project created by QtCreator
 #
 #-------------------------------------------------
 
@@ -16,10 +16,14 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
+    note.cpp \
+    notelist.cpp \
     playlist.cpp \
     track.cpp
 
 HEADERS  += mainwindow.h \
+    note.h \
+    notelist.h \
     playlist.h \
     track.h \
     utils.h

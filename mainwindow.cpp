@@ -5,6 +5,8 @@
 #include "algorithm"
 #include "iostream"
 #include "string"
+#include <iostream>
+#include <fstream>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -24,11 +26,15 @@ MainWindow::MainWindow(QWidget *parent) :
 
     if(ui->listWidget->count() != 0){
         loadTrack();
+        loadNotes();
         player->pause();
         updater->start();
-
     }
 
+    ui->listWidgetNotes->setCurrentRow(0);
+    ui->error_message_label->setStyleSheet( "QLabel { color : red }; " );
+
+    updateNoteList();
 }
 
 
@@ -38,8 +44,10 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+//add mp3 location to file "playlist"
 void MainWindow::on_add_clicked()
-{   bool startUpdater = false;if(ui->listWidget->count() == 0) startUpdater = true;
+{
+    bool startUpdater = false;if(ui->listWidget->count() == 0) startUpdater = true;
     QStringList files = QFileDialog::getOpenFileNames(this, tr("Select Music Files"));
     if(!files.empty())
     {
@@ -70,7 +78,7 @@ void MainWindow::on_save_clicked()
     ui->save->setChecked(true);
 }
 
-
+//load & play track
 void MainWindow::on_listWidget_doubleClicked(const QModelIndex &index)
 {
     lCounter = getIndex();
@@ -80,21 +88,24 @@ void MainWindow::on_listWidget_doubleClicked(const QModelIndex &index)
 
     loadTrack();
     player->play();
+
+    loadNotes();
 }
 
 
 void MainWindow::on_play_clicked()
 {
-    if(ui->listWidget->count() != 0)
-    if(player->state() == QMediaPlayer::PlayingState)
-    {
-        player->pause();
+    if(ui->listWidget->count() != 0) {
+        if(player->state() == QMediaPlayer::PlayingState)
+        {
+            player->pause();
+        }
+       else
+       {
+            player->play();
+            updater->start();
+       }
     }
-   else
-   {
-        player->play();
-        updater->start();
-   }
 }
 
 void MainWindow::on_forward_clicked()
@@ -135,9 +146,14 @@ void MainWindow::on_seekBar_sliderMoved(int position)
 void MainWindow::on_mute_clicked()
 {
     muted = !muted;
-    (muted)?player->setVolume(0):player->setVolume(ui->volumeBar->value());
+    if (muted) {
+        player->setVolume(0);
+        ui->mute->setText("unmute");
+    } else {
+        player->setVolume(ui->volumeBar->value());
+        ui->mute->setText("mute");
+    }
 }
-
 
 void MainWindow::on_repeat_clicked()
 {
@@ -160,6 +176,8 @@ void MainWindow::update()
     {
         next();
     }
+
+    ui->labelTime->setText(QString::fromStdString(timetostr(player->position() / 1000)));
 }
 
 void MainWindow::updateList()
@@ -171,6 +189,11 @@ void MainWindow::updateList()
 int MainWindow::getIndex()
 {
     return ui->listWidget->currentIndex().row();
+}
+
+int MainWindow::getIndexNote()
+{
+    return ui->listWidgetNotes->currentIndex().row();
 }
 
 void MainWindow::keyPressEvent(QKeyEvent *event)
@@ -191,20 +214,26 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
     }
     case Qt::Key_Up :
     {
-        int ind = getIndex() - 1;if(ind < 0)ind = ui->listWidget->count() - 1;
-        ui->listWidget->setCurrentRow(ind);
+        if(!ui->listWidgetNotes->hasFocus())
+        {
+                int ind = getIndex() - 1;if(ind < 0)ind = ui->listWidget->count() - 1;
+                ui->listWidget->setCurrentRow(ind);
+        } else {
+                int ind = getIndexNote() - 1;if(ind < 0)ind = ui->listWidgetNotes->count() - 1;
+                ui->listWidgetNotes->setCurrentRow(ind);
+        }
         break;
     }
     case Qt::Key_Down :
     {
-        int ind = getIndex() + 1;if(ind >= ui->listWidget->count())ind = 0;
-        ui->listWidget->setCurrentRow(ind);
-        break;
-    }
-    default :
-    {
-        ui->searchBar->setFocus();
-
+        if(!ui->listWidgetNotes->hasFocus())
+        {
+            int ind = getIndex() + 1;if(ind >= ui->listWidget->count())ind = 0;
+            ui->listWidget->setCurrentRow(ind);
+        } else {
+            int ind = getIndexNote() + 1;if(ind >= ui->listWidgetNotes->count())ind = 0;
+            ui->listWidgetNotes->setCurrentRow(ind);
+        }
         break;
     }
     }
@@ -280,5 +309,85 @@ void MainWindow::on_searchBar_textChanged(const QString &arg1)
             break;
         }
     }
+
+}
+
+//реализация заметок
+
+void MainWindow::updateNoteList()
+{
+    ui->listWidgetNotes->clear();
+    ui->listWidgetNotes->addItems(notelist.getNoteList());
+}
+
+void MainWindow::on_add_note_clicked()
+{
+    bool startUpdater = false;if(ui->listWidgetNotes->count() == 0) startUpdater = true;
+        QStringList newnote;
+        if(!playlist.tracks.empty())
+        {
+            if(ui->textEditNote->toPlainText() != "")
+            {
+                ui->error_message_label->setText("");
+                QString note_input = ui->textEditNote->toPlainText() + "@" + QString::number(player->position()/1000);
+                newnote << note_input;
+                if(startUpdater) updater->start();
+                notelist.add(newnote);
+                updateNoteList();
+                ui->save_note->setChecked(false);
+                if(startUpdater) updater->start();
+            } else {
+                ui->error_message_label->setText("Невозможно добавить пустую заметку");
+            }
+        } else {
+            ui->error_message_label->setText("Нет треков, чтобы добавлять к ним записи");
+        }
+}
+
+void MainWindow::on_remove_note_clicked()
+{
+    qDebug() << "remove clicked";
+    int index = getIndexNote();
+    if(index != -1)
+    {
+       notelist.remove(index);
+       updateNoteList();
+       ui->listWidgetNotes->setCurrentRow(index);
+       ui->save_note->setChecked(false);
+    }
+}
+
+void MainWindow::on_save_note_clicked()
+{
+    notelist.save();
+    ui->save_note->setChecked(true);
+}
+
+void MainWindow::loadNotes()
+{
+    QString qstr = QString::fromStdString(playlist.tracks[getIndex()].getName());
+     ui->currentSong_2->setText(qstr);
+}
+
+void MainWindow::on_textEditNote_textChanged()
+{
+    const int MAX_NOTE_SIZE = 200;
+    if(ui->textEditNote->hasFocus())
+        if (ui->textEditNote->toPlainText().length() > MAX_NOTE_SIZE)
+        {
+            ui->error_message_label->setText("Достигнут предел длины текста");
+            QString edT = ui->textEditNote->toPlainText();
+            edT.chop(ui->textEditNote->toPlainText().length() - MAX_NOTE_SIZE);
+            ui->textEditNote->setText(edT);
+
+            QTextCursor cursor(ui->textEditNote->textCursor());
+            cursor.movePosition(QTextCursor::End, QTextCursor::MoveAnchor);
+            ui->textEditNote->setTextCursor(cursor);
+        } else {
+            if (ui->textEditNote->toPlainText().length() == MAX_NOTE_SIZE)
+                 ui->error_message_label->setText("Достигнут предел длины текста");
+            else
+                ui->error_message_label->setText("");
+        }
 
 }

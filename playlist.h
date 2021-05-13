@@ -4,7 +4,8 @@
 #include "QStringList"
 #include "vector"
 #include "track.h"
-
+#include <fstream>
+#include "utils.h"
 
 class Playlist
 {

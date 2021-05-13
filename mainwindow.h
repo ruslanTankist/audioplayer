@@ -3,14 +3,19 @@
 
 #include <QMainWindow>
 #include "playlist.h"
+#include "notelist.h"
 #include <QtMultimedia/QMediaPlayer>
 #include "QTimer"
 #include "QPalette"
 #include "vector"
 #include "QKeyEvent"
 #include "QLineEdit"
+#include "utils.h"
+#include <QColor>
 
 using namespace std;
+
+string timetostr(int inttime);
 
 namespace Ui {
 class MainWindow;
@@ -53,6 +58,14 @@ private slots:
 
     void on_searchBar_textChanged(const QString &arg1);
 
+    void on_add_note_clicked();
+
+    void on_remove_note_clicked();
+
+    void on_save_note_clicked();
+
+    void on_textEditNote_textChanged();
+
 private:
     void updateList();
 
@@ -66,6 +79,12 @@ private:
 
     int getIndex();
 
+    int getIndexNote();
+
+    void updateNoteList();
+
+    void loadNotes();
+
     bool repeat = false;
 
     bool muted = false;
@@ -75,6 +94,8 @@ private:
     int lCounter = 0;
 
     Playlist playlist;
+
+    NoteList notelist;
 
     Ui::MainWindow *ui;
 
