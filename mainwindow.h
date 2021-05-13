@@ -11,6 +11,7 @@
 #include "QKeyEvent"
 #include "QLineEdit"
 #include "utils.h"
+#include <QColor>
 
 using namespace std;
 
@@ -62,6 +63,8 @@ private slots:
     void on_remove_note_clicked();
 
     void on_save_note_clicked();
+
+    void on_textEditNote_textChanged();
 
 private:
     void updateList();

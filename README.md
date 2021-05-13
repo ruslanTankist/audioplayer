@@ -1,6 +1,7 @@
 # Qt Music Player
 
-Simple music player made in Qt.
+Music player made in Qt.
+Added a feature of saving text-notes for certain time-codes, might be useful for a musician or composer.
 
 ## Requierments
 * You must have Qt5 installed
@@ -8,5 +9,4 @@ Simple music player made in Qt.
 
 ## Screenshots
 
-![sh](http://i.imgur.com/vQWAJIf.png)
-![sh2](http://i.imgur.com/98nD251.png)
+![sh](http://i.imgur.com/98nD251.png)

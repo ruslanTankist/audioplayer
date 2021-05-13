@@ -29,9 +29,10 @@ MainWindow::MainWindow(QWidget *parent) :
         loadNotes();
         player->pause();
         updater->start();
-    } 
+    }
 
     ui->listWidgetNotes->setCurrentRow(0);
+    ui->error_message_label->setStyleSheet( "QLabel { color : red }; " );
 
     updateNoteList();
 }
@@ -213,20 +214,26 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
     }
     case Qt::Key_Up :
     {
-        int ind = getIndex() - 1;if(ind < 0)ind = ui->listWidget->count() - 1;
-        ui->listWidget->setCurrentRow(ind);
+        if(!ui->listWidgetNotes->hasFocus())
+        {
+                int ind = getIndex() - 1;if(ind < 0)ind = ui->listWidget->count() - 1;
+                ui->listWidget->setCurrentRow(ind);
+        } else {
+                int ind = getIndexNote() - 1;if(ind < 0)ind = ui->listWidgetNotes->count() - 1;
+                ui->listWidgetNotes->setCurrentRow(ind);
+        }
         break;
     }
     case Qt::Key_Down :
     {
-        int ind = getIndex() + 1;if(ind >= ui->listWidget->count())ind = 0;
-        ui->listWidget->setCurrentRow(ind);
-        break;
-    }
-    default :
-    {
-        ui->searchBar->setFocus();
-
+        if(!ui->listWidgetNotes->hasFocus())
+        {
+            int ind = getIndex() + 1;if(ind >= ui->listWidget->count())ind = 0;
+            ui->listWidget->setCurrentRow(ind);
+        } else {
+            int ind = getIndexNote() + 1;if(ind >= ui->listWidgetNotes->count())ind = 0;
+            ui->listWidgetNotes->setCurrentRow(ind);
+        }
         break;
     }
     }
@@ -317,15 +324,23 @@ void MainWindow::on_add_note_clicked()
 {
     bool startUpdater = false;if(ui->listWidgetNotes->count() == 0) startUpdater = true;
         QStringList newnote;
-        QString note_input = ui->textEditNote->toPlainText() + "@" + QString::number(player->position()/1000);
-        newnote << note_input;
-
-        if(startUpdater) updater->start();
-        if(!newnote.empty()){
-            notelist.add(newnote);
-            updateNoteList();
-            ui->save_note->setChecked(false);
-            if(startUpdater) updater->start();
+        if(!playlist.tracks.empty())
+        {
+            if(ui->textEditNote->toPlainText() != "")
+            {
+                ui->error_message_label->setText("");
+                QString note_input = ui->textEditNote->toPlainText() + "@" + QString::number(player->position()/1000);
+                newnote << note_input;
+                if(startUpdater) updater->start();
+                notelist.add(newnote);
+                updateNoteList();
+                ui->save_note->setChecked(false);
+                if(startUpdater) updater->start();
+            } else {
+                ui->error_message_label->setText("Невозможно добавить пустую заметку");
+            }
+        } else {
+            ui->error_message_label->setText("Нет треков, чтобы добавлять к ним записи");
         }
 }
 
@@ -352,4 +367,27 @@ void MainWindow::loadNotes()
 {
     QString qstr = QString::fromStdString(playlist.tracks[getIndex()].getName());
      ui->currentSong_2->setText(qstr);
+}
+
+void MainWindow::on_textEditNote_textChanged()
+{
+    const int MAX_NOTE_SIZE = 200;
+    if(ui->textEditNote->hasFocus())
+        if (ui->textEditNote->toPlainText().length() > MAX_NOTE_SIZE)
+        {
+            ui->error_message_label->setText("Достигнут предел длины текста");
+            QString edT = ui->textEditNote->toPlainText();
+            edT.chop(ui->textEditNote->toPlainText().length() - MAX_NOTE_SIZE);
+            ui->textEditNote->setText(edT);
+
+            QTextCursor cursor(ui->textEditNote->textCursor());
+            cursor.movePosition(QTextCursor::End, QTextCursor::MoveAnchor);
+            ui->textEditNote->setTextCursor(cursor);
+        } else {
+            if (ui->textEditNote->toPlainText().length() == MAX_NOTE_SIZE)
+                 ui->error_message_label->setText("Достигнут предел длины текста");
+            else
+                ui->error_message_label->setText("");
+        }
+
 }
